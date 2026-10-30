@@ -2,7 +2,9 @@ FROM golang:latest AS builder
 WORKDIR /app
 
 ARG DERP_VERSION=latest
-RUN go install tailscale.com/cmd/derper@${DERP_VERSION}
+# 默认使用国内 Go 模块代理，允许通过构建参数覆盖；保留模块校验。
+ARG GOPROXY=https://goproxy.cn
+RUN GOPROXY=${GOPROXY} go install tailscale.com/cmd/derper@${DERP_VERSION}
 
 FROM ubuntu
 WORKDIR /app
